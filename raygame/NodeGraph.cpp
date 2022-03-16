@@ -45,7 +45,28 @@ void sortFScore(DynamicArray<NodeGraph::Node*>& nodes)
 DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 {
 	//Insert algorithm here
+	DynamicArray<NodeGraph::Node*> openSet = DynamicArray<NodeGraph::Node*>();
+	DynamicArray<NodeGraph::Node*> closedSet = DynamicArray<NodeGraph::Node*>();
+
+	openSet.addItem(start);
+	while (openSet.getLength() > 0)
+	{
+		// For each of the nodes next to the current node set the g scores of each and set
+		for (int i = 0; i < openSet[0]->edges.getLength(); i++)
+		{
+			NodeGraph::Node* targetNode = openSet[0]->edges[i].target;
+			targetNode->gScore = openSet[0]->gScore + openSet[0]->edges[i].cost;
+			targetNode->previous = openSet[0];
+
+			if (!closedSet.contains(targetNode) && !openSet.contains(targetNode))
+				openSet.addItem(targetNode);
+		}
+		closedSet.addItem(openSet[0]);
+		openSet.remove(openSet[0]);
+	}
 	
+
+	return reconstructPath(goal, start);
 }
 
 void NodeGraph::drawGraph(Node* start)
@@ -84,6 +105,22 @@ void NodeGraph::drawConnectedNodes(Node* node, DynamicArray<Node*>& drawnList)
 		//Draw the target node
 		if (!drawnList.contains(e.target)) {
 			drawConnectedNodes(e.target, drawnList);
+		}
+	}
+}
+
+void NodeGraph::sortByGScore(DynamicArray<Node*>& nodeList)
+{
+	for (int i = 0; i < nodeList.getLength(); i++)
+	{
+		for (int j = 0; j < nodeList.getLength(); j++)
+		{
+			if (nodeList[i]->gScore > nodeList[j]->gScore)
+			{
+				Node* tempNode = nodeList[j];
+				nodeList[j] = nodeList[i];
+				nodeList[i] = tempNode;
+			}
 		}
 	}
 }

@@ -34,4 +34,6 @@ namespace NodeGraph
 	void drawNode(Node* node, int color = 0xFFFFFFFFF);
 
 	void drawConnectedNodes(Node* node, DynamicArray<Node*>& drawnList);
+
+	void sortByGScore(DynamicArray<Node*>& nodeList);
 }
