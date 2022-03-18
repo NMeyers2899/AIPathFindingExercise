@@ -47,24 +47,31 @@ DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 	//Insert algorithm here
 	DynamicArray<NodeGraph::Node*> openSet = DynamicArray<NodeGraph::Node*>();
 	DynamicArray<NodeGraph::Node*> closedSet = DynamicArray<NodeGraph::Node*>();
+	Node* currentNode = start;
 
 	openSet.addItem(start);
 	while (openSet.getLength() > 0)
 	{
-		// For each of the nodes next to the current node set the g scores of each and set
-		for (int i = 0; i < openSet[0]->edges.getLength(); i++)
-		{
-			NodeGraph::Node* targetNode = openSet[0]->edges[i].target;
+		sortByGScore(openSet);
+		currentNode = openSet[0];
+		openSet.remove(currentNode);
 
-			if (!closedSet.contains(targetNode) && !openSet.contains(targetNode))
+		if (!closedSet.contains(currentNode))
+		{
+			// For each of the nodes next to the current node set the g scores of each and set
+			for (int i = 0; i < currentNode->edges.getLength(); i++)
 			{
-				targetNode->gScore = openSet[0]->gScore + openSet[0]->edges[i].cost;
-				targetNode->previous = openSet[0];
-				openSet.addItem(targetNode);
+				NodeGraph::Node* targetNode = currentNode->edges[i].target;
+				if (targetNode->gScore == 0 || targetNode->gScore > currentNode->gScore + currentNode->edges[i].cost)
+				{
+					targetNode->gScore = currentNode->gScore + currentNode->edges[i].cost;
+					targetNode->previous = currentNode;
+				}
+				if(!openSet.contains(targetNode))
+					openSet.addItem(targetNode);
 			}
+			closedSet.addItem(currentNode);
 		}
-		closedSet.addItem(openSet[0]);
-		openSet.remove(openSet[0]);
 	}
 
 	return reconstructPath(start, goal);
