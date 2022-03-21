@@ -4,12 +4,14 @@
 
 DynamicArray<NodeGraph::Node*> reconstructPath(NodeGraph::Node* start, NodeGraph::Node* end)
 {
+	resetGraphScore(start);
+
 	DynamicArray<NodeGraph::Node*> path;
 	NodeGraph::Node* currentNode = end;
 
 	while (currentNode != start->previous)
 	{
-		currentNode->color = 0xFFFF00FF;
+		currentNode->color = 0xFF0000FF;
 		path.insert(currentNode, 0);
 		currentNode = currentNode->previous;
 	}
@@ -44,16 +46,23 @@ void sortFScore(DynamicArray<NodeGraph::Node*>& nodes)
 
 DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 {
-	//Insert algorithm here
+	// Create two lists and a currentNode that will hold the starting position.
 	DynamicArray<NodeGraph::Node*> openSet = DynamicArray<NodeGraph::Node*>();
 	DynamicArray<NodeGraph::Node*> closedSet = DynamicArray<NodeGraph::Node*>();
 	Node* currentNode = start;
 
+	// Adds start to the open list.
 	openSet.addItem(start);
+
+	// While there is an item in the open list, this will loop.
 	while (openSet.getLength() > 0)
 	{
 		sortByGScore(openSet);
 		currentNode = openSet[0];
+
+		if (currentNode == goal)
+			return reconstructPath(start, goal);
+
 		openSet.remove(currentNode);
 
 		if (!closedSet.contains(currentNode))
@@ -73,8 +82,6 @@ DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 			closedSet.addItem(currentNode);
 		}
 	}
-
-	return reconstructPath(start, goal);
 }
 
 void NodeGraph::drawGraph(Node* start)
@@ -105,13 +112,13 @@ void NodeGraph::drawConnectedNodes(Node* node, DynamicArray<Node*>& drawnList)
 	for (int i = 0; i < node->edges.getLength(); i++)
 	{
 		Edge e = node->edges[i];
-		////Draw the Edge
-		//DrawLine((int)node->position.x, (int)node->position.y, (int)e.target->position.x, (int)e.target->position.y, WHITE);
-		////Draw the cost
-		//MathLibrary::Vector2 costPos = { (node->position.x + e.target->position.x) / 2, (node->position.y + e.target->position.y) / 2 };
-		//static char buffer[10];
-		//sprintf_s(buffer, "%.0f", e.cost);
-		//DrawText(buffer, (int)costPos.x, (int)costPos.y, 16, RAYWHITE);
+		//Draw the Edge
+		DrawLine((int)node->position.x, (int)node->position.y, (int)e.target->position.x, (int)e.target->position.y, WHITE);
+		//Draw the cost
+		MathLibrary::Vector2 costPos = { (node->position.x + e.target->position.x) / 2, (node->position.y + e.target->position.y) / 2 };
+		static char buffer[10];
+		sprintf_s(buffer, "%.0f", e.cost);
+		DrawText(buffer, (int)costPos.x, (int)costPos.y, 16, RAYWHITE);
 		//Draw the target node
 		if (!drawnList.contains(e.target)) {
 			drawConnectedNodes(e.target, drawnList);
