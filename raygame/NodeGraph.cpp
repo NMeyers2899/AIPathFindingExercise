@@ -119,16 +119,17 @@ void NodeGraph::drawConnectedNodes(Node* node, DynamicArray<Node*>& drawnList)
 
 void NodeGraph::sortByGScore(DynamicArray<Node*>& nodeList)
 {
-	for (int i = 0; i < nodeList.getLength(); i++)
-	{
-		for (int j = 0; j < nodeList.getLength(); j++)
-		{
-			if (nodeList[i]->gScore > nodeList[j]->gScore)
-			{
-				Node* tempNode = nodeList[j];
-				nodeList[j] = nodeList[i];
-				nodeList[i] = tempNode;
-			}
+	NodeGraph::Node* key = nullptr;
+	int j = 0;
+
+	for (int i = 1; i < nodeList.getLength(); i++) {
+		key = nodeList[i];
+		j = i - 1;
+		while (j >= 0 && nodeList[j]->gScore > key->gScore) {
+			nodeList[j + 1] = nodeList[j];
+			j--;
 		}
+
+		nodeList[j + 1] = key;
 	}
 }
