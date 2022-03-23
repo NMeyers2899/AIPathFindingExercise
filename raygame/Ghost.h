@@ -2,7 +2,8 @@
 #include "Agent.h"
 
 class Maze;
-class PathfindComponent;
+class ChaserPathfindComponent;
+class CircleCollider;
 
 class Ghost : public Agent
 {
@@ -28,10 +29,14 @@ public:
 	/// <param name="target">The new target</param>
 	void setTarget(Actor* target);
 
-private:
-	PathfindComponent* m_pathfindComponent;
-	Maze* m_maze;
+	bool getIsChaser() { return m_isChaser; }
+	void setIsChaser(bool value) { m_isChaser = value; }
 
+private:
+	ChaserPathfindComponent* m_pathfindComponent;
+	Maze* m_maze;
+	bool m_isChaser = true;
 	Actor* m_target = nullptr;
+	CircleCollider* m_circleCollider;
 };
 

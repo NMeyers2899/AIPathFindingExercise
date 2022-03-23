@@ -3,6 +3,7 @@
 #include "Transform2D.h"
 #include "Agent.h"
 #include "MoveComponent.h"
+#include "Ghost.h"
 
 void PathfindComponent::start()
 {

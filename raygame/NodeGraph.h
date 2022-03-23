@@ -37,6 +37,8 @@ namespace NodeGraph
 
 	void sortByGScore(DynamicArray<Node*>& nodeList);
 
+	float calculateHScore(Node* start, Node* goal);
+
 	void resetGraphScore(Node* start);
 	void resetConnectedNodes(Node* node, DynamicArray<Node*>& resetList);
 }

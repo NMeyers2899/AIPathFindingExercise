@@ -57,7 +57,7 @@ DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 	// While there is an item in the open list, this will loop.
 	while (openSet.getLength() > 0)
 	{
-		sortByGScore(openSet);
+		sortFScore(openSet);
 		currentNode = openSet[0];
 
 		if (currentNode == goal)
@@ -74,6 +74,8 @@ DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 				if (targetNode->gScore == 0 || targetNode->gScore > currentNode->gScore + currentNode->edges[i].cost)
 				{
 					targetNode->gScore = currentNode->gScore + currentNode->edges[i].cost;
+					targetNode->hScore = calculateHScore(targetNode, goal);
+					targetNode->fScore = targetNode->gScore + targetNode->hScore;
 					targetNode->previous = currentNode;
 				}
 				if(!openSet.contains(targetNode))
@@ -141,6 +143,11 @@ void NodeGraph::sortByGScore(DynamicArray<Node*>& nodeList)
 
 		nodeList[j + 1] = key;
 	}
+}
+
+float NodeGraph::calculateHScore(Node* start, Node* goal)
+{
+	return abs(start->position.x - goal->position.x) + abs(start->position.y - goal->position.y);
 }
 
 void NodeGraph::resetGraphScore(Node * start)
