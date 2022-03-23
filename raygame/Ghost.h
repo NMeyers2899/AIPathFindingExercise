@@ -38,5 +38,8 @@ private:
 	bool m_isChaser = true;
 	Actor* m_target = nullptr;
 	CircleCollider* m_circleCollider;
+	bool m_isInvincible;
+	float m_invincibilityTime = 2.0f;
+	float m_currentTime = 0;
 };
 

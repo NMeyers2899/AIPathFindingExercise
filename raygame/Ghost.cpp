@@ -8,6 +8,7 @@
 #include "SpriteComponent.h"
 #include "Player.h"
 #include "CircleCollider.h"
+#include "WanderComponent.h"
 
 Ghost::Ghost(float x, float y, float maxSpeed, float maxForce, int color, Maze* maze)
 	: Agent(x, y, "Ghost", maxSpeed, maxForce)
@@ -31,6 +32,22 @@ Ghost::~Ghost()
 void Ghost::update(float deltaTime)
 {
 	Agent::update(deltaTime);
+
+	if (getTransform()->getWorldPosition().x <= 100 && getTransform()->getWorldPosition().y <= 100)
+		RAYLIB_H::CloseWindow();
+
+	if (m_isInvincible)
+	{
+	//...increase the invincibility timer.
+	m_currentTime += deltaTime;
+	m_isInvincible = m_currentTime < m_invincibilityTime;
+	}
+	//otherwise...
+	else
+	{
+	//...reset the timer.
+	m_currentTime = 0;
+	}
 }
 
 void Ghost::draw()
@@ -55,10 +72,17 @@ void Ghost::onCollision(Actor* other)
 		getMoveComponent()->setVelocity({ 0, 0 });
 	}*/
 
-	if (dynamic_cast<Player*>(other) && getIsChaser())
+	if (dynamic_cast<Player*>(other) && getIsChaser() && !m_isInvincible)
+	{
+		m_isInvincible = true;
 		setIsChaser(false);
-	else if (dynamic_cast<Player*>(other) && !getIsChaser())
+	}
+	else if (dynamic_cast<Player*>(other) && !getIsChaser() && !m_isInvincible)
+	{
+		m_isInvincible = true;
 		setIsChaser(true);
+	}
+		
 }
 
 void Ghost::setTarget(Actor* target)
